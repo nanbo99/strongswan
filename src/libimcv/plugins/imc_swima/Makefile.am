@@ -20,7 +20,8 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/src/libstrongswan \
 	-I$(top_srcdir)/src/libtncif \
 	-I$(top_srcdir)/src/libimcv \
-	-DSWID_DIRECTORY=\"${prefix}/share\"
+	-DSWID_DIRECTORY=\"${prefix}/share\" \
+	-DPLUGINS=\""random nonce sqlite"\"
 
 AM_CFLAGS = \
 	$(PLUGIN_CFLAGS)
@@ -30,7 +31,15 @@ imcv_LTLIBRARIES = imc-swima.la
 imc_swima_la_LIBADD = \
 	$(top_builddir)/src/libimcv/libimcv.la \
 	$(top_builddir)/src/libstrongswan/libstrongswan.la
-
 imc_swima_la_SOURCES = imc_swima.c imc_swima_state.h imc_swima_state.c
-
 imc_swima_la_LDFLAGS = -module -avoid-version -no-undefined
+
+ipsec_PROGRAMS = sw-collector
+sw_collector_SOURCES = sw-collector.c
+sw_collector_LDADD = \
+		$(top_builddir)/src/libstrongswan/libstrongswan.la
+sw-collector.o : $(top_builddir)/config.status
+
+templatesdir = $(pkgdatadir)/templates/database/sw-collector
+dist_templates_DATA = collector_tables.sql
+
